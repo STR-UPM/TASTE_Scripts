@@ -12,7 +12,7 @@ flake8:
 	@flake8 --benchmark ${PY_SRC} || exit 1
 
 pylint:
-	@echo --ooO Performing static analysis via pylint
+	@echo -- Performing static analysis via pylint
 	@pylint ${PY_SRC} || exit 1
 
 .PHONY: flake8 pylint
