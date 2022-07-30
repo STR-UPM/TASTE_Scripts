@@ -21,7 +21,7 @@ except for the files implemented by the user.
   
 ### Example
 
-Suppose that you are in the `src` directory, which contains the TASTE project for the ACS use case.
+Suppose that you are in the `src` directory, which contains the TASTE project for the [ACS use case](https://github.com/STR-UPM/UPMSat-2_ACS_TASTE/tree/main/src).
 Like all TASTE projects, this one contains a `work` directory for all the TASTE functions implementations.
 However, only a few source and/or modelling files are intended to be modified by the user and won't be updated by the TASTE code generators.
 In a real project that uses CVS, it is important to track the changes from these files,
