@@ -193,7 +193,7 @@ class FileIgnorer:
         Returns the list of folders that need to be ignored for the given
         file path
         """
-        parents: List[str] = list()
+        parents: List[str] = []
 
         parent: str = os.path.dirname(file_path)
         while parent not in ('', '/') and not FileIgnorer.__was_ignored(parent):
@@ -225,7 +225,7 @@ def main() -> int:
     try:
 
         mode = "w+" if Console.flags["FORCE_SET"] else "x"
-        with open(".gitignore", mode) as gi_fd:
+        with open(".gitignore", mode, encoding="utf-8") as gi_fd:
             return fill_gitignore(gi_fd, Console.taste_fns)
 
     except FileExistsError as existing:
@@ -294,7 +294,7 @@ def lines_for_fn(fn_name: str) -> str:
 
 def files_written_by_users(fn_name: str) -> List[str]:
     """Returns a list of files written by the user, that should not be ignored"""
-    result: List[str] = list()
+    result: List[str] = []
 
     # user_file_from #
 
