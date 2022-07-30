@@ -57,19 +57,18 @@ class Console:
 
     # Initialize static variables to default:
 
-    __initialized : bool = False
+    __initialized: bool = False
+    tp_dir: str = os.getcwd()
+    gi_dir: str = os.path.join(tp_dir, "work")
+    gi_path: str = os.path.join(gi_dir, ".gitignore")
+    my_name: str = os.path.basename(sys.argv[0])
 
-    my_name : str = os.path.basename(sys.argv[0])
-    tp_dir  : str = os.getcwd()
-    gi_dir  : str = os.path.join(tp_dir, "work")
-    gi_path : str = os.path.join(gi_dir, ".gitignore")
-
-    flags : Dict [str, bool] = {
-        "DEBUG_SET" : False,
-        "FORCE_SET" : False,
+    flags: Dict[str, bool] = {
+        "DEBUG_SET": False,
+        "FORCE_SET": False,
     }
 
-    taste_fns : List[str] = [""]
+    taste_fns: List[str] = [""]
 
     @staticmethod
     def initialize() -> None:
@@ -93,19 +92,18 @@ class Console:
             Console.flags["DEBUG_SET"] = Console.__flag_value("-dbg")
             Console.flags["FORCE_SET"] = Console.__flag_value("-f")
 
-            Console.tp_dir  = Console.__arg_value("-r")
-            Console.gi_dir  = os.path.join(Console.tp_dir, "work")
+            Console.tp_dir = Console.__arg_value("-r")
+            Console.gi_dir = os.path.join(Console.tp_dir, "work")
             Console.gi_path = os.path.join(Console.gi_dir, ".gitignore")
 
             missing_fns = (len(sys.argv) - 1) == 0
             if missing_fns:
                 print("Info: You will ignore everything inside the work directory")
 
-            Console.taste_fns = [ os.path.basename(a.strip("/")) for a in sys.argv[1:] ]
-
+            Console.taste_fns = [os.path.basename(a.strip("/")) for a in sys.argv[1:]]
 
     @staticmethod
-    def __arg_value(arg_symbol : str) -> str:
+    def __arg_value(arg_symbol: str) -> str:
         arg_value = ""
         if arg_symbol in sys.argv:
             idx = sys.argv.index(arg_symbol)
@@ -114,14 +112,12 @@ class Console:
             del sys.argv[idx]
         return arg_value
 
-
     @staticmethod
-    def __flag_value(arg_symbol : str) -> bool:
-        flag_set : bool = arg_symbol in sys.argv
+    def __flag_value(arg_symbol: str) -> bool:
+        flag_set: bool = arg_symbol in sys.argv
         if flag_set:
             sys.argv.remove(arg_symbol)
         return flag_set
-
 
     @staticmethod
     def print_usage() -> None:
@@ -134,13 +130,11 @@ Usage: {Console.my_name} [-h] [-dbg] [-f] [-r ROOT] <FUNCTIONS>
     - [-f]          if a gitignore file exists, overwrite it
     - [-r ROOT]     specify the TASTE root project location""")
 
-
     @staticmethod
     def print_debug(msg) -> None:
         """Public method that prints the given msg if debug mode set"""
         if Console.flags["DEBUG_SET"]:
             print("Debug: ", msg)
-
 
 
 # ----------------- #
@@ -154,10 +148,10 @@ class FileIgnorer:
     ignored, i.e.: they are ignored only once.
     """
 
-    ignored_files : Set [str] = set()
+    ignored_files: Set[str] = set()
 
     @staticmethod
-    def lines_to_ignore_all_except(file_path : str) -> str:
+    def lines_to_ignore_all_except(file_path: str) -> str:
         """ Returns the required lines to ignore everything except the given file path
 
         Note that these "required lines" include the lines to ignore the file
@@ -168,17 +162,15 @@ class FileIgnorer:
 
         for fp in file_path:
             if not FileIgnorer.__was_ignored(fp):
-                lines = FileIgnorer.__lines_to_ignore_parents_from(fp) + \
-                        f"!{fp}{os.linesep*2}"
+                lines = FileIgnorer.__lines_to_ignore_parents_from(fp) + f"!{fp}{os.linesep*2}"
 
                 FileIgnorer.ignored_files.add(fp)
                 return lines
 
         return ""
 
-
     @staticmethod
-    def __lines_to_ignore_parents_from(file_path : str) -> str:
+    def __lines_to_ignore_parents_from(file_path: str) -> str:
         """Returns a string to ignore parent directories from file_path
 
         Note that if any directory was previously ignored, it wont be ignored
@@ -186,7 +178,7 @@ class FileIgnorer:
         """
         file_path = os.path.normpath(file_path)
 
-        lines : str = ""
+        lines: str = ""
         for folder in FileIgnorer.__folders_to_ignore_from(file_path):
             FileIgnorer.ignored_files.add(folder)
             lines = lines + f"""\
@@ -195,16 +187,15 @@ class FileIgnorer:
 """
         return lines
 
-
     @staticmethod
-    def __folders_to_ignore_from(file_path : str) -> List [str]:
+    def __folders_to_ignore_from(file_path: str) -> List[str]:
         """
         Returns the list of folders that need to be ignored for the given
         file path
         """
-        parents : List[str] = list()
+        parents: List[str] = list()
 
-        parent : str = os.path.dirname(file_path)
+        parent: str = os.path.dirname(file_path)
         while parent not in ('', '/') and not FileIgnorer.__was_ignored(parent):
             # Note: If the parent was ignored, its parents were ignored too!
             parents.append(parent)
@@ -213,12 +204,14 @@ class FileIgnorer:
         parents.reverse()
         return parents
 
-
     @staticmethod
-    def __was_ignored(file_path : str) -> bool:
+    def __was_ignored(file_path: str) -> bool:
         return FileIgnorer.ignored_files and file_path in FileIgnorer.ignored_files
 
-##  Functions  #################################################################
+
+# --------- #
+# Functions #
+# --------- #
 
 # Main #
 
@@ -243,9 +236,10 @@ def main() -> int:
     Console.print_usage()
     return 1
 
+
 # fill_gitignore #
 
-def fill_gitignore(gi_fd, taste_fns : List[str]) -> int:
+def fill_gitignore(gi_fd, taste_fns: List[str]) -> int:
     """
     Fills the gitignore file with the required contents to ignore everything,
     except the user's hand-written files from the given taste functions
@@ -277,9 +271,10 @@ def fill_gitignore(gi_fd, taste_fns : List[str]) -> int:
 
     return 0
 
+
 # lines_for_fn #
 
-def lines_for_fn(fn_name : str) -> str:
+def lines_for_fn(fn_name: str) -> str:
     """Creates the list of files to be excluded for the given TASTE function
 
     Returns:
@@ -288,23 +283,23 @@ def lines_for_fn(fn_name : str) -> str:
     """
     Console.print_debug("+ " + fn_name)
 
-
     lines = f"# Ignore all except hand written files from the {fn_name} function:{os.linesep}"
     for user_file in files_written_by_users(fn_name):
         lines = lines + FileIgnorer.lines_to_ignore_all_except(user_file)
 
     return lines
 
+
 # files_written_by_users #
 
-def files_written_by_users(fn_name : str) -> List [str]:
+def files_written_by_users(fn_name: str) -> List[str]:
     """Returns a list of files written by the user, that should not be ignored"""
-    result : List[str] = list()
+    result: List[str] = list()
 
     # user_file_from #
 
-    def user_file_from(fn_name : str, lang : str) -> str:
-        user_file : str = ""
+    def user_file_from(fn_name: str, lang: str) -> str:
+        user_file: str = ""
 
         if lang in ("C", "Blackbox_C"):
             user_file = f"{fn_name.lower()}.c"
@@ -323,20 +318,20 @@ def files_written_by_users(fn_name : str) -> List [str]:
 
     # files_written_by_user_from_language #
 
-    def files_written_by_user_from_language(lang_path : str) -> str:
+    def files_written_by_user_from_language(lang_path: str) -> str:
         lang = os.path.basename(lang_path)
         Console.print_debug("    · " + lang)
         return f"{lang_path}/src/{user_file_from(fn_name, lang)}"
 
     # files_written_by_user_recursively #
 
-    def files_written_by_user_recursively(path : str) -> None:
+    def files_written_by_user_recursively(path: str) -> None:
         # Case 1) The dir is a TASTE supported language, C, CPP, Ada, SDL, ...
         if os.path.basename(path) in TASTE_SUPPORTED_LANGS:
             # Case 1.1) The dir is a soft/hard link
             if os.path.islink(path):
                 result.append(path)
-                return # don't dig in the link, get out!
+                return  # don't dig in the link, get out!
 
             # Case 1.2) The dir is a regular directory:
             result.append(files_written_by_user_from_language(path))
@@ -350,7 +345,10 @@ def files_written_by_users(fn_name : str) -> List [str]:
     files_written_by_user_recursively(fn_name)
     return result
 
-##  Entry Point  ###############################################################
+
+# ----------- #
+# Entry Point #
+# ----------- #
 
 if __name__ == "__main__":
     sys.exit(main())
