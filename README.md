@@ -1,4 +1,4 @@
-# TASTE_Scripts
+# TASTE_Scripts ![badge-scripts](https://github.com/STR-UPM/TASTE_Scripts/actions/workflows/pylint.yml/badge.svg)
 This repository gathers helper scripts created for the TASTE toolchain.
 
 ## `taste-create-gitignore`
