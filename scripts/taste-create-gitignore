@@ -162,7 +162,7 @@ class FileIgnorer:
 
         for fp in file_path:
             if not FileIgnorer.__was_ignored(fp):
-                lines = FileIgnorer.__lines_to_ignore_parents_from(fp) + f"!{fp}{os.linesep*2}"
+                lines = FileIgnorer.__lines_to_ignore_parents(fp) + f"!{fp}{os.linesep*2}"
 
                 FileIgnorer.ignored_files.add(fp)
                 return lines
@@ -170,7 +170,7 @@ class FileIgnorer:
         return ""
 
     @staticmethod
-    def __lines_to_ignore_parents_from(file_path: str) -> str:
+    def __lines_to_ignore_parents(file_path: str) -> str:
         """Returns a string to ignore parent directories from file_path
 
         Note that if any directory was previously ignored, it wont be ignored
@@ -179,7 +179,7 @@ class FileIgnorer:
         file_path = os.path.normpath(file_path)
 
         lines: str = ""
-        for folder in FileIgnorer.__folders_to_ignore_from(file_path):
+        for folder in FileIgnorer.__folders_to_ignore(file_path):
             FileIgnorer.ignored_files.add(folder)
             lines = lines + f"""\
 !{folder}
@@ -188,7 +188,7 @@ class FileIgnorer:
         return lines
 
     @staticmethod
-    def __folders_to_ignore_from(file_path: str) -> List[str]:
+    def __folders_to_ignore(file_path: str) -> List[str]:
         """
         Returns the list of folders that need to be ignored for the given
         file path
@@ -296,32 +296,35 @@ def files_written_by_users(fn_name: str) -> List[str]:
     """Returns a list of files written by the user, that should not be ignored"""
     result: List[str] = []
 
-    # user_file_from #
+    # user_files #
 
-    def user_file_from(fn_name: str, lang: str) -> str:
-        user_file: str = ""
+    def user_files(fn_name: str, lang: str) -> List[str]:
+        user_files: List[str] = []
 
         if lang in ("C", "Blackbox_C"):
-            user_file = f"{fn_name.lower()}.c"
-        if lang == "Ada":
-            user_file = f"{fn_name.lower()}.adb"
-        if lang == "CPP":
-            user_file = f"{fn_name.lower()}.cc"
-        if lang == "SDL":
-            user_file = f"{fn_name.lower()}.pr"
-        if lang == "GUI":
-            user_file = "UserWidgets.py"
-        if lang in ("QGenC", "QGenAda", "Simulink"):
-            user_file = "*.slx"
+            user_files.append(f"{fn_name.lower()}.c")
+        elif lang == "Ada":
+            user_files.append(f"{fn_name.lower()}.adb")
+        elif lang == "CPP":
+            user_files.append(f"{fn_name.lower()}.cc")
+            user_files.append(f"{fn_name.lower()}_state.h")
+        elif lang == "SDL":
+            user_files.append(f"{fn_name.lower()}.pr")
+        elif lang == "GUI":
+            user_files.append("UserWidgets.py")
+        elif lang in ("QGenC", "QGenAda", "Simulink"):
+            user_files.append("*.slx")
+        else:
+            Console.print_debug("Unknown language: " + lang)
 
-        return user_file
+        return user_files
 
     # files_written_by_user_from_language #
 
-    def files_written_by_user_from_language(lang_path: str) -> str:
+    def files_written_by_user_from_language(lang_path: str) -> List[str]:
         lang = os.path.basename(lang_path)
         Console.print_debug("    · " + lang)
-        return f"{lang_path}/src/{user_file_from(fn_name, lang)}"
+        return [f"{lang_path}/src/{f}" for f in user_files(fn_name, lang)]
 
     # files_written_by_user_recursively #
 
@@ -334,7 +337,7 @@ def files_written_by_users(fn_name: str) -> List[str]:
                 return  # don't dig in the link, get out!
 
             # Case 1.2) The dir is a regular directory:
-            result.append(files_written_by_user_from_language(path))
+            result.extend(files_written_by_user_from_language(path))
 
         # Case 2) Its nota TASTE supported language
         for subpath in os.listdir(path):
