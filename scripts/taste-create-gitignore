@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-#              Copyright (C) 2022 STRAST-UPM research group
+#             Copyright (C) 2022-2023 STRAST-UPM research group
 #       This work was developed in the context of the AURORA project
 
 """
@@ -9,14 +9,14 @@ taste-create-git-ignore
 
 Purpose:
    This script creates a .gitignore file given a set of TASTE functions passed
-   as command line arguments. If the file exist the contents are NOT erased
+   as command line arguments.    If the file exist the contents are NOT erased
    unless specified by the user.
 
 Considerations:
    This script SHOULD be invoked in the TASTE project root since it depends on
    the location of the work directory. However, you can specify the TASTE root
    project location with the -r flag.
-   The TASTE functions passed as parameter can be specified with and without
+   The TASTE functions passed as parameters can be specified  with and without
    their directory name.
    Although,  the entry point is located in the bottom af all functions.  This
    script is intended to be read from top to bottom. Nested/inner functions
