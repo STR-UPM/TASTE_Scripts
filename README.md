@@ -86,3 +86,9 @@ taste-create-gitignore -r . -f work/acs_algorithm/ \
     The script will ignore everything except the hand-written files from these functions.
 -   It is not mandatory to specify the relative path from the TASTE functions,
     the `work/` dirnames can be omitted.
+
+# License
+
+> Copyright (C) 2023 Universidad Politécnica de Madrid
+
+These scripts were developed by the [Real-Time Systems Group](https://www.dit.upm.es/~str/) at the [Universidad Politécnica de Madrid](https://www.upm.es/) under the [**GNU General Public License v3**](LICENSE).
